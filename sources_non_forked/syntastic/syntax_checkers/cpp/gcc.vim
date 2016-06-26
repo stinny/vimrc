@@ -48,7 +48,7 @@ endfunction
 call g:SyntasticRegistry.CreateAndRegisterChecker({
     \ 'filetype': 'cpp',
     \ 'name': 'gcc',
-    \ 'exec': 'g++' })
+    \ 'exec': 'g++-6' })
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

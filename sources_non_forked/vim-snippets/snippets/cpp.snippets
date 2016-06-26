@@ -1,5 +1,106 @@
 extends c
 
+## Default file
+snippet gcj
+	#include <vector>
+	#include <iostream>
+	#include <unordered_map>
+	#include <map>
+	#include <iomanip>
+	#include <functional>
+	#include <algorithm>
+	#include <cassert>
+	#include <cmath>
+	#include <string>
+	#include <sstream>
+	using namespace std;
+	
+	#ifndef MDEBUG
+	#define NDEBUG
+	#endif
+
+	#define x first
+	#define y second
+	#define ll long long
+	#define d double
+	#define ld long double
+	#define pii pair<int,int>
+	#define pil pair<int,ll>
+	#define pli pair<ll,int>
+	#define pll pair<ll,ll>
+	#define pss pair<string,string>
+	#define psi pair<string,int>
+	#define pis pair<int,string>
+	#define psl pair<string,ll>
+	#define pls pair<ll,string>
+	#define wh(x) (x).begin(),(x).end()
+	#define ri(x) int x;cin>>x;
+	#define rii(x,y) int x,y;cin>>x>>y;
+	#define rl(x) ll x;cin>>x;
+	#define rv(v) for(auto&_cinv:v) cin>>_cinv;
+	#define wv(v) for(auto&_coutv:v) cout << _coutv << ' '; cout << endl;
+	#define ev(v) for(auto&_cerrv:v) cerr << _cerrv << ' '; cerr << endl;
+	#define MOD 1000000007
+	
+	namespace std { 
+	template<typename T,typename U>struct hash<pair<T,U>>{hash<T>t;hash<U>u;size_t operator()(const pair<T,U>&p)const{return t(p.x)^(u(p.y)<<7);}};
+	}
+	// auto fraclt = [](auto&a,auto&b) { return (ll)a.x * b.y < (ll)b.x * a.y; };
+	template<typename T,typename F>T bsh(T l,T h,const F&f){T r=-1,m;while(l<=h){m=(l+h)/2;if(f(m)){l=m+1;r=m;}else{h=m-1;}}return r;}
+	template<typename T,typename F>T bsl(T l,T h,const F&f){T r=-1,m;while(l<=h){m=(l+h)/2;if(f(m)){h=m-1;r=m;}else{l=m+1;}}return r;}
+	template<typename T> T gcd(T a,T b) { if (a<b) swap(a,b); return b?gcd(b,a%b):a; }
+	template<typename T> void fracn(pair<T,T>&a) {auto g=gcd(a.x,a.y);a.x/=g;a.y/=g;}
+	template<typename T> struct Index { int operator[](const T&t){auto i=m.find(t);return i!=m.end()?i->y:m[t]=m.size();}int s(){return m.size();} unordered_map<T,int> m; };
+	
+	int main(int,char**) {
+		ios_base::sync_with_stdio(false);
+
+		ri(T)
+		for (int t=1;t<=T;++t) {
+			cout << "Case #" << t << ": ";
+			${1}
+		}
+	}
+
+## Algs
+snippet flow
+	#define V vector
+	template<class T>struct Edge{int u,v;T c,f;size_t i;};
+	template<class T>struct PushRelabel{int n;V<V<Edge<T>>>d;V<T>x;V<int>l,c;V<bool>a;V<V<int>>B;int b;PushRelabel(int n):n(n),d(n){}void AddEdge(int u,int v,T c=1)
+	{d[u].push_back({u,v,c,0,d[v].size()});if(u==v)d[u].back().i++;d[v].push_back({v,u,0,0,d[u].size()-1});}void q(int v){if(!a[v]&&x[v]>0&&l[v]<n){a[v]=true;
+	B[l[v]].push_back(v);b=max(b,l[v]);}}void z(Edge<T>&e){T m=min(x[e.u],e.c-e.f);if(l[e.u]==l[e.v]+1&&m>T(0)){e.f+=m;d[e.v][e.i].f-=m;x[e.v]+=m;x[e.u]-=m;
+	q(e.v);}}inline void s(int v, int n) {--c[l[v]];l[v] = n;++c[l[v]];q(v);}void g(int k){for(int v=0;v<n;v++)if(l[v]>=k)s(v,max(l[v],n));}void r(int v){int nl=n;
+	for(auto&e:d[v]){if(e.c-e.f>0)nl=min(nl,l[e.v]+1);}s(v,nl);}void h(int v){for(auto&e:d[v]){z(e);if(x[v]<=0)return;}if(c[l[v]]==1)g(l[v]);else r(v);}T GetMaxFlow
+	(int s, int t){l=V<int>(n,0),x=V<T>(n,0),c=V<int>(n+1,0),a=V<bool>(n,false),B=V<V<int>>(n),b=0;for(auto&e:d[s])x[s]+=e.c;c[0]=n;q(s);a[t]=true;while(b>=0){if(!B[b]
+	.empty()){int v=B[b].back();B[b].pop_back();a[v]=false;h(v);}else b--;}return x[t];}};
+	#undef V
+
+## Two-dimensional vector
+snippet vec2
+	vector<vector<${1:int}>> ${2}(${3},vector<$1>(${4},${5:0}));
+
+
+## Modular arithmetic
+snippet madd
+	{$1} = (${1} + ${2}) % ${3:MOD}
+snippet msub
+	{$1} = (${1} + ${2}) % ${3:MOD}
+snippet mmul
+	{$1} = ((ll)${1} * (ll)${2}) % ${3:MOD}
+
+## In-place extremes
+snippet mmin
+	${1} = min(${1},${2})
+snippet mmax
+	${1} = max(${1},${2})
+
+## Algorithm
+snippet all
+	all_of(${1:A}.begin(),$1.end(),[&](decltype(*begin($1)) it){ return ${2:it}; });
+snippet any
+	any_of(${1:A}.begin(),$1.end(),[&](decltype(*begin($1)) it){ return ${2:it}; });
+snippet none
+	none_of(${1:A}.begin(),$1.end(),[&](decltype(*begin($1)) it){ return ${2:it}; });
 ##
 ## Preprocessor
 # #include <...>
@@ -11,52 +112,52 @@ snippet binc
 ## STL Collections
 # std::array
 snippet array
-	std::array<${1:T}, ${2:N}> ${3};
+	array<${1:T}, ${2:N}> ${3};
 # std::vector
 snippet vector
-	std::vector<${1:T}> ${2};
+	vector<${1:T}> ${2};
 # std::deque
 snippet deque
-	std::deque<${1:T}> ${2};
+	deque<${1:T}> ${2};
 # std::forward_list
 snippet flist
-	std::forward_list<${1:T}> ${2};
+	forward_list<${1:T}> ${2};
 # std::list
 snippet list
-	std::list<${1:T}> ${2};
+	list<${1:T}> ${2};
 # std::set
 snippet set
-	std::set<${1:T}> ${2};
+	set<${1:T}> ${2};
 # std::map
 snippet map
-	std::map<${1:Key}, ${2:T}> ${3};
+	map<${1:Key}, ${2:T}> ${3};
 # std::multiset
 snippet mset
-	std::multiset<${1:T}> ${2};
+	multiset<${1:T}> ${2};
 # std::multimap
 snippet mmap
-	std::multimap<${1:Key}, ${2:T}> ${3};
+	multimap<${1:Key}, ${2:T}> ${3};
 # std::unordered_set
 snippet uset
-	std::unordered_set<${1:T}> ${2};
+	unordered_set<${1:T}> ${2};
 # std::unordered_map
 snippet umap
-	std::unordered_map<${1:Key}, ${2:T}> ${3};
+	unordered_map<${1:Key}, ${2:T}> ${3};
 # std::unordered_multiset
 snippet umset
-	std::unordered_multiset<${1:T}> ${2};
+	unordered_multiset<${1:T}> ${2};
 # std::unordered_multimap
 snippet ummap
-	std::unordered_multimap<${1:Key}, ${2:T}> ${3};
+	unordered_multimap<${1:Key}, ${2:T}> ${3};
 # std::stack
 snippet stack
-	std::stack<${1:T}> ${2};
+	stack<${1:T}> ${2};
 # std::queue
 snippet queue
-	std::queue<${1:T}> ${2};
+	queue<${1:T}> ${2};
 # std::priority_queue
 snippet pqueue
-	std::priority_queue<${1:T}> ${2};
+	priority_queue<${1:T}> ${2};
 ##
 ## Access Modifiers
 # private
@@ -128,13 +229,13 @@ snippet fori
 
 # foreach
 snippet fore
-	for (${1:auto} ${2:i} : ${3:container}) {
-		${4}
+	for (auto & ${1:i} : ${2:container}) {
+		${3}
 	}
 # iterator
 snippet iter
-	for (${1:std::vector}<${2:type}>::${3:const_iterator} ${4:i} = ${5:container}.begin(); $4 != $5.end(); ++$4) {
-		${6}
+	for (auto ${1:i} = ${2:container}.begin(); $1 != $2.end(); ++$1) {
+		${3}
 	}
 
 # auto iterator
@@ -144,11 +245,11 @@ snippet itera
 	}
 ##
 ## Lambdas
-# lamda (one line)
+# lambda (one line)
 snippet ld
 	[${1}](${2}){${3}};
 # lambda (multi-line)
 snippet lld
-	[${1}](${2}){
-		${3}
-	};
+	[&](${1}){
+		${2}
+	}
